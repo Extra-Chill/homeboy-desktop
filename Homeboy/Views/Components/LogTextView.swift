@@ -1,36 +1,32 @@
 import SwiftUI
 import AppKit
 
-/// NSTextView wrapper with native macOS find bar support (Cmd+F)
-struct CodeTextView: NSViewRepresentable {
-    @Binding var text: String
+/// NSTextView wrapper with native macOS find bar support for read-only log content
+struct LogTextView: NSViewRepresentable {
+    let content: String
+    let isLoading: Bool
 
     func makeNSView(context: Context) -> NSScrollView {
         let textView = NSTextView()
-        
+
         // Text styling
         textView.font = .monospacedSystemFont(ofSize: NSFont.systemFontSize, weight: .regular)
         textView.textColor = .textColor
-        
-        // Editing behavior
-        textView.isEditable = true
+
+        // Read-only behavior
+        textView.isEditable = false
         textView.isSelectable = true
-        textView.allowsUndo = true
         textView.isRichText = false
         textView.importsGraphics = false
-        textView.isAutomaticQuoteSubstitutionEnabled = false
-        textView.isAutomaticDashSubstitutionEnabled = false
-        textView.isAutomaticTextReplacementEnabled = false
-        textView.isAutomaticSpellingCorrectionEnabled = false
-        
-        // Find bar (Cmd+F)
+
+        // Find bar (Cmd+F) - system handles this automatically
         textView.usesFindBar = true
         textView.isIncrementalSearchingEnabled = true
-        
+
         // Background styling
         textView.drawsBackground = true
         textView.backgroundColor = .textBackgroundColor
-        
+
         // Layout - allow horizontal scrolling for long lines
         textView.isHorizontallyResizable = true
         textView.isVerticallyResizable = true
@@ -38,10 +34,10 @@ struct CodeTextView: NSViewRepresentable {
         textView.textContainer?.containerSize = NSSize(width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude)
         textView.textContainer?.widthTracksTextView = false
         textView.maxSize = NSSize(width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude)
-        
-        // Delegate for text changes
-        textView.delegate = context.coordinator
-        
+
+        // Set initial content
+        textView.string = content
+
         // Wrap in scroll view
         let scrollView = NSScrollView()
         scrollView.documentView = textView
@@ -50,35 +46,22 @@ struct CodeTextView: NSViewRepresentable {
         scrollView.autohidesScrollers = true
         scrollView.borderType = .noBorder
         scrollView.drawsBackground = false
-        
+
         return scrollView
     }
-    
+
     func updateNSView(_ scrollView: NSScrollView, context: Context) {
         guard let textView = scrollView.documentView as? NSTextView else { return }
-        
-        // Only update if text differs to avoid cursor jumping
-        if textView.string != text {
-            let selectedRanges = textView.selectedRanges
-            textView.string = text
-            textView.selectedRanges = selectedRanges
-        }
-    }
-    
-    func makeCoordinator() -> Coordinator {
-        Coordinator(self)
-    }
-    
-    class Coordinator: NSObject, NSTextViewDelegate {
-        var parent: CodeTextView
-        
-        init(_ parent: CodeTextView) {
-            self.parent = parent
-        }
-        
-        func textDidChange(_ notification: Notification) {
-            guard let textView = notification.object as? NSTextView else { return }
-            parent.text = textView.string
+
+        // Only update if content differs to avoid cursor jumping
+        if textView.string != content {
+            let wasAtBottom = textView.visibleRect.maxY >= textView.bounds.height - 10 // Close to bottom
+            textView.string = content
+
+            // Auto-scroll to bottom if content changed and we were at the bottom
+            if wasAtBottom {
+                textView.scrollToEndOfDocument(nil)
+            }
         }
     }
 }

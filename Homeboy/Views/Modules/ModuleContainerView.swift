@@ -83,7 +83,7 @@ struct ModuleContainerView: View {
                 }
                 
             case .ready:
-                if module.manifest.runtime != nil {
+                if let _ = module.manifest.runtime {
                     ModuleReadyView(module: module, viewModel: viewModel)
                 } else {
                     PlatformModuleView(module: module)

@@ -16,9 +16,9 @@ Source of truth checked for this pass: `homeboy --help` plus focused help for th
 
 | CLI command | Desktop support status | Current app surface / file references | Desktop boundary / remaining work | Tracking |
 |---|---|---|---|---|
-| `homeboy project` | partial/stale | Project switcher and settings-backed project CRUD; wrappers in `Homeboy/Core/CLI/HomeboyCLI+WorkspaceCommands.swift`. | Usable as app infrastructure. Legacy CRUD helpers still need removal from old `CLIBridge` surface. | [#54](https://github.com/Extra-Chill/homeboy-desktop/issues/54) |
+| `homeboy project` | supported first-pass UI | Project switcher and settings-backed project CRUD; wrappers in `Homeboy/Core/CLI/HomeboyCLI+WorkspaceCommands.swift`. | Usable as app infrastructure. Raw global config editing stays CLI-only. | Matrix only |
 | `homeboy ssh` | partial/stale | Generic SSH support behind file, log, db, and deploy workflows; server settings in `Homeboy/Views/Settings/ServersSettingsTab.swift`. | Keep as supporting infrastructure. Add an ad-hoc SSH console only if a real desktop workflow needs it. | Matrix only |
-| `homeboy server` | partial/stale | Server settings UI plus server wrappers in `Homeboy/Core/CLI/HomeboyCLI+WorkspaceCommands.swift`. | Usable for normal server setup. Legacy wrappers remain cleanup debt. | [#54](https://github.com/Extra-Chill/homeboy-desktop/issues/54) |
+| `homeboy server` | supported first-pass UI | Server settings UI plus server wrappers in `Homeboy/Core/CLI/HomeboyCLI+WorkspaceCommands.swift`. | Usable for normal server setup. Advanced SSH/key diagnostics stay CLI-only until a focused UI needs them. | Matrix only |
 | `homeboy test` | supported first-pass UI | Quality workspace stage button via `Homeboy/Extensions/Quality/Views/QualityView.swift` and `Homeboy/Core/CLI/HomeboyCLI+QualityCommands.swift`. | Supports normal scoped runs (`changed-since`, `changed-only`, path override). Advanced analysis/drift/write flows remain CLI-only. | Matrix only |
 | `homeboy bench` | supported first-pass UI | Bench workspace in `Homeboy/Views/BenchView.swift`; wrappers in `Homeboy/Core/CLI/HomeboyCLI+RigBenchReleaseCommands.swift`. | Lists scenarios and runs benchmarks with iteration control. Baseline, ratchet, multi-run, concurrency, settings, and `--rig` comparisons remain CLI-only. | Matrix only |
 | `homeboy lint` | supported first-pass UI | Quality workspace stage button. | Read-only lint output is supported. `--fix`, baseline, ratchet, sniffs/category filters, and per-file/glob targeting remain CLI-only. | Matrix only |
@@ -29,7 +29,7 @@ Source of truth checked for this pass: `homeboy --help` plus focused help for th
 | `homeboy transfer` | missing workflow | No dedicated transfer workflow. | Keep out of File Editor for now. If needed, add a focused local/server transfer sheet with dry-run output. | Matrix only |
 | `homeboy triage` | supported first-pass UI | Quality workspace `Run Triage` action; `qualityTriage()` wrapper. | `triage component` is surfaced. Project/fleet/rig/workspace triage plus filters (`--mine`, labels, failing checks, drilldown) remain CLI-only. | Matrix only |
 | `homeboy deploy` | supported first-pass UI | Deployer tool in `Homeboy/Extensions/Deployer/`. | Deploy remains its own guarded write workflow. Release/build planning is now separate from deployment. | Matrix only |
-| `homeboy component` | partial/stale | Component settings UI and models; wrappers in `Homeboy/Core/CLI/HomeboyCLI+WorkspaceCommands.swift`. | Usable for normal component config. Legacy CRUD helpers remain cleanup debt. | [#54](https://github.com/Extra-Chill/homeboy-desktop/issues/54) |
+| `homeboy component` | supported first-pass UI | Component settings UI and models; wrappers in `Homeboy/Core/CLI/HomeboyCLI+WorkspaceCommands.swift`. | Usable for normal component config. Bulk/JSON-pointer style edits stay CLI-only. | Matrix only |
 | `homeboy config` | intentionally CLI-only | App settings expose focused project/server/component fields, not raw global config mutation. | Keep raw global config editing in the CLI. | Matrix only |
 | `homeboy daemon` | intentionally CLI-only | No daemon management UI. | Desktop consumes CLI/API behavior; it should not manage the local daemon lifecycle unless a future diagnostic screen needs it. | Matrix only |
 | `homeboy extension` | supported first-pass UI | Extension manager and dynamic extension views under `Homeboy/Core/Extensions/` and `Homeboy/Views/Extensions/`. | Extension install/setup/run exists as app infrastructure. Advanced extension authoring stays CLI/docs-driven. | Matrix only |
@@ -51,7 +51,7 @@ Source of truth checked for this pass: `homeboy --help` plus focused help for th
 | `homeboy undo` | partial/stale | Undo wrappers exist in `Homeboy/Core/CLI/HomeboyCLI+RigBenchReleaseCommands.swift`, but no visible undo surface. | Surface undo from workflows that perform Homeboy writes rather than as a standalone command center. | Matrix only |
 | `homeboy auth` | supported first-pass UI | API/Auth workspace in `Homeboy/Views/Components/APIAuthWorkspaceView.swift`; wrappers in `Homeboy/Core/CLI/HomeboyCLI+WorkspaceCommands.swift`. | Supports project auth status/login/logout. This is separate from the desktop app login session. | Matrix only |
 | `homeboy api` | read-only UI | API/Auth safe GET explorer. | `api get` is supported. `post`, `put`, `patch`, and `delete` remain CLI-only until preview/confirmation UX exists. | Matrix only |
-| `homeboy upgrade` | partial/stale | CLI update UI exists in `Homeboy/Views/Settings/GeneralSettingsTab.swift`, but still uses Homebrew-specific paths. | Replace with `homeboy upgrade --check` / `homeboy upgrade` so source/cargo/binary installs work. | [#56](https://github.com/Extra-Chill/homeboy-desktop/issues/56) |
+| `homeboy upgrade` | supported first-pass UI | CLI update UI in `Homeboy/Views/Settings/GeneralSettingsTab.swift` and launch-time update sheet now use `homeboy upgrade --check` / `homeboy upgrade`. | Install help still shows the Homebrew path, but update execution is no longer Homebrew-specific. | Matrix only |
 | `homeboy list` | intentionally CLI-only | Alias for `--help`; no desktop wrapper. | No UI needed. | Matrix only |
 | `homeboy cargo` | intentionally CLI-only | No Cargo passthrough UI. | Keep as CLI-only extension convenience. Desktop should expose component-level build/test/validate instead. | Matrix only |
 | `homeboy wp` | intentionally CLI-only | WordPress settings/auth surfaces exist, but no WP-CLI passthrough. | Keep as CLI-only unless a WordPress operations console is explicitly designed. | Matrix only |
@@ -91,6 +91,4 @@ Some audit findings previously seen against Homeboy Desktop were detector-shape 
 
 ## Active Desktop Follow-Up Issues
 
-- [#54 Refactor: remove legacy CLI CRUD wrappers from CLIBridge](https://github.com/Extra-Chill/homeboy-desktop/issues/54)
-- [#56 Fix: use homeboy upgrade instead of Homebrew-specific upgrade path](https://github.com/Extra-Chill/homeboy-desktop/issues/56)
-- [#57 Test: split desktop contract tests by command surface](https://github.com/Extra-Chill/homeboy-desktop/issues/57)
+No active follow-up issues remain from this parity pass. New desktop work should be filed from a concrete workflow need rather than from the historical parity backlog.

@@ -85,15 +85,18 @@ struct ContentView: View {
     @ObservedObject private var configManager = ConfigurationManager.shared
     @ObservedObject private var extensionManager = ExtensionManager.shared
     @StateObject private var missionStore = MissionStore()
-    @State private var selectedItem: NavigationItem? = .activity
+    @StateObject private var navigationState = AppNavigationState()
+
+    private var selectedItem: NavigationItem? { navigationState.selectedItem }
 
     var body: some View {
         NavigationSplitView {
-            SidebarView(selectedItem: $selectedItem)
+            SidebarView(selectedItem: $navigationState.selectedItem)
         } detail: {
             detailView
         }
         .environmentObject(missionStore)
+        .environmentObject(navigationState)
         .onChange(of: configManager.activeProject?.id) { _, _ in
             ensureSelectedItemIsAvailable()
         }
@@ -109,7 +112,7 @@ struct ContentView: View {
         // Fall back to the global Activity workspace rather than forcing a
         // project tool selection: orchestration domains never require a
         // project, so losing project-tool availability is not a dead end.
-        selectedItem = .activity
+        navigationState.selectedItem = .activity
     }
     
     /// Views are kept mounted in a ZStack to preserve state (including running processes)

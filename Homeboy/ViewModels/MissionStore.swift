@@ -201,6 +201,14 @@ final class MissionStore: ObservableObject {
         pollingTask = nil
     }
 
+    /// Called when the mission detail view reappears so polling for the
+    /// still-selected run resumes without re-fetching the run and events
+    /// from scratch (which `selectRun` would do for a fresh selection).
+    func resumePollingIfNeeded() {
+        guard let runId = selectedRunId else { return }
+        startPollingIfNeeded(runId: runId)
+    }
+
     private func startPollingIfNeeded(runId: String) {
         guard selectedRunId == runId else { return }
         guard let run = runsById[runId], !run.isTerminal else { return }

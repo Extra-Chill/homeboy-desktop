@@ -79,7 +79,7 @@ Extensions can declare dependencies on project configuration (components, featur
 | Field | Type | Required | Description |
 |-------|------|----------|-------------|
 | `components` | array | No | Component IDs that must exist in the active project config |
-| `features` | array | No | Required feature flags (supported: `hasDatabase`, `hasRemoteDeployment`, `hasRemoteLogs`, `hasCLI`) |
+| `features` | array | No | Required feature flags (supported: `hasRemoteDeployment`, `hasCLI`) |
 | `projectType` | string | No | Required project type (e.g. `wordpress`) |
 
 ### Input Object

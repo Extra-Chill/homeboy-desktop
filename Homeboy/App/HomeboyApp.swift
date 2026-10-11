@@ -61,7 +61,7 @@ struct CLISetupSheet: View {
                 .font(.title2)
                 .fontWeight(.semibold)
 
-            Text("Homeboy requires the CLI tool for deployment, database, and remote operations.")
+            Text("Homeboy requires the CLI tool for deployment and remote operations.")
                 .multilineTextAlignment(.center)
                 .foregroundColor(.secondary)
                 .frame(maxWidth: 400)

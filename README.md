@@ -28,20 +28,10 @@ Homeboy Desktop connects to your servers and shows you a unified view of all you
 - Version comparison (see what's outdated before you deploy)
 - Automatic backups before changes
 
-**Database Browser** — Explore your databases visually
-- Browse tables without writing SQL
-- Run queries and see results in a clean table view
-- Copy data to clipboard instantly
-
 **Remote File Editor** — Edit files on your server directly
 - Pinnable tabs for frequently accessed files
 - Syntax highlighting for code files
 - Automatic backups before saves
-
-**Remote Log Viewer** — Monitor logs in real-time
-- Live log streaming with filtering
-- Search across log files
-- Pinnable tabs for important logs
 
 ## Quick Start
 
@@ -66,7 +56,7 @@ Homeboy Desktop connects to your servers and shows you a unified view of all you
 5. **Start managing**:
    - View your dashboard
    - Deploy components with one click
-   - Browse databases and logs visually
+   - Edit remote files
 
 ## System Requirements
 

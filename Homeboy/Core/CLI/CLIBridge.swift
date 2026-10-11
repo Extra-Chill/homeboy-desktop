@@ -124,8 +124,6 @@ private struct CLIBridgeProjectEntity: Decodable {
     let basePath: String?
     let tablePrefix: String?
     let remoteFiles: RemoteFileConfigCLI?
-    let remoteLogs: RemoteLogConfigCLI?
-    let database: DatabaseConfigCLI?
     let tools: ToolsConfigCLI?
     let api: ApiConfigCLI?
     let subTargets: [SubTargetCLI]?
@@ -146,24 +144,6 @@ private struct CLIBridgeProjectEntity: Decodable {
                 pinnedFiles: remoteFiles.pinnedFiles.map { file in
                     PinnedRemoteFile(id: UUID(), path: file.path, label: nil)
                 }
-            )
-        }
-
-        if let remoteLogs {
-            config.remoteLogs = RemoteLogConfig(
-                pinnedLogs: remoteLogs.pinnedLogs.map { log in
-                    PinnedRemoteLog(id: UUID(), path: log.path, label: nil, tailLines: log.tailLines)
-                }
-            )
-        }
-
-        if let database {
-            config.database = DatabaseConfig(
-                host: database.host,
-                port: database.port,
-                name: database.name,
-                user: database.user,
-                useSSHTunnel: database.useSshTunnel
             )
         }
 

@@ -165,7 +165,6 @@ struct SidebarView: View {
     }
     
     /// Core tools to display in the sidebar.
-    /// All tools are universal - Database Browser shows config prompt if not configured.
     /// Settings is shown in a separate section below.
     private var coreTools: [CoreTool] {
         CoreTool.allCases.filter { $0 != .settings && $0.isAvailable(for: config.activeProject) }

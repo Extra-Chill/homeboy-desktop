@@ -42,10 +42,6 @@ extension AppError {
         AppError(message, source: "File Editor", path: path)
     }
 
-    static func databaseBrowser(_ message: String, path: String? = nil) -> AppError {
-        AppError(message, source: "Database Browser", path: path)
-    }
-
     static func extensionError(_ extensionId: String, _ message: String) -> AppError {
         AppError(message, source: "Extension: \(extensionId)")
     }

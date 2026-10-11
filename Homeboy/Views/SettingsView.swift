@@ -12,9 +12,6 @@ struct SettingsView: View {
             ServersSettingsTab(config: config)
                 .tabItem { Text("Servers") }
             
-            DatabaseSettingsTab(config: config)
-                .tabItem { Text("Database") }
-            
             if config.safeActiveProject.isWordPress {
                 WordPressSettingsTab(config: config)
                     .environmentObject(authManager)

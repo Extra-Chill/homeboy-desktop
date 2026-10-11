@@ -28,36 +28,6 @@ struct PinnedRemoteFile: Codable, Identifiable, Equatable {
     }
 }
 
-// MARK: - Remote Log Viewer Configuration
-
-/// Configuration for the Remote Log Viewer pinned logs
-struct RemoteLogConfig: Codable, Equatable {
-    var pinnedLogs: [PinnedRemoteLog]
-
-    init(pinnedLogs: [PinnedRemoteLog] = []) {
-        self.pinnedLogs = pinnedLogs
-    }
-}
-
-/// A pinned remote log in the Remote Log Viewer
-struct PinnedRemoteLog: Codable, Identifiable, Equatable {
-    var id: UUID
-    var path: String       // Relative to basePath
-    var label: String?
-    var tailLines: Int
-    
-    init(id: UUID = UUID(), path: String, label: String? = nil, tailLines: Int = 100) {
-        self.id = id
-        self.path = path
-        self.label = label
-        self.tailLines = tailLines
-    }
-    
-    var displayName: String {
-        label ?? URL(fileURLWithPath: path).lastPathComponent
-    }
-}
-
 /// Component attachment stored on a Homeboy project.
 struct ProjectComponentAttachment: Codable, Equatable {
     var id: String
@@ -137,8 +107,6 @@ struct ProjectConfiguration: Codable, Identifiable {
 
     var extensions: [String]
     var remoteFiles: RemoteFileConfig
-    var remoteLogs: RemoteLogConfig
-    var database: DatabaseConfig
     var tools: ToolsConfig
     var api: APIConfig
     var subTargets: [SubTarget]
@@ -153,7 +121,7 @@ struct ProjectConfiguration: Codable, Identifiable {
     private enum CodingKeys: String, CodingKey {
         case id, name, domain
         case serverId, basePath, tablePrefix
-        case extensions, remoteFiles, remoteLogs, database, tools, api
+        case extensions, remoteFiles, tools, api
         case subTargets, sharedTables, components, componentIds, componentOverrides, services
         case changelogNextSectionLabel, changelogNextSectionAliases
     }
@@ -184,8 +152,6 @@ struct ProjectConfiguration: Codable, Identifiable {
         tablePrefix: String? = nil,
         extensions: [String] = [],
         remoteFiles: RemoteFileConfig,
-        remoteLogs: RemoteLogConfig,
-        database: DatabaseConfig,
         tools: ToolsConfig,
         api: APIConfig,
         subTargets: [SubTarget] = [],
@@ -205,8 +171,6 @@ struct ProjectConfiguration: Codable, Identifiable {
         self.tablePrefix = tablePrefix
         self.extensions = extensions
         self.remoteFiles = remoteFiles
-        self.remoteLogs = remoteLogs
-        self.database = database
         self.tools = tools
         self.api = api
         self.subTargets = subTargets
@@ -234,22 +198,6 @@ struct ProjectConfiguration: Codable, Identifiable {
             pinnedFiles: config.remoteFiles.pinnedFiles.map { file in
                 PinnedRemoteFile(id: UUID(), path: file.path, label: nil)
             }
-        )
-
-        // Convert CLI remote logs (generate UUIDs since CLI doesn't provide them)
-        self.remoteLogs = RemoteLogConfig(
-            pinnedLogs: config.remoteLogs.pinnedLogs.map { log in
-                PinnedRemoteLog(id: UUID(), path: log.path, label: nil, tailLines: log.tailLines)
-            }
-        )
-
-        // Convert CLI database config
-        self.database = DatabaseConfig(
-            host: config.database.host,
-            port: config.database.port,
-            name: config.database.name,
-            user: config.database.user,
-            useSSHTunnel: config.database.useSshTunnel
         )
 
         // Convert CLI tools config
@@ -308,8 +256,6 @@ struct ProjectConfiguration: Codable, Identifiable {
             tablePrefix: nil,
             extensions: [],
             remoteFiles: RemoteFileConfig(),
-            remoteLogs: RemoteLogConfig(),
-            database: DatabaseConfig(),
             tools: ToolsConfig(),
             api: APIConfig(),
             subTargets: [],
@@ -338,11 +284,7 @@ struct ProjectConfiguration: Codable, Identifiable {
 
         remoteFiles = try container.decodeIfPresent(RemoteFileConfig.self, forKey: .remoteFiles)
             ?? RemoteFileConfig()
-        remoteLogs = try container.decodeIfPresent(RemoteLogConfig.self, forKey: .remoteLogs)
-            ?? RemoteLogConfig()
 
-        database = try container.decodeIfPresent(DatabaseConfig.self, forKey: .database)
-            ?? DatabaseConfig()
         tools = try container.decodeIfPresent(ToolsConfig.self, forKey: .tools)
             ?? ToolsConfig()
         api = try container.decodeIfPresent(APIConfig.self, forKey: .api)
@@ -370,8 +312,6 @@ struct ProjectConfiguration: Codable, Identifiable {
 
         try container.encode(extensions, forKey: .extensions)
         try container.encode(remoteFiles, forKey: .remoteFiles)
-        try container.encode(remoteLogs, forKey: .remoteLogs)
-        try container.encode(database, forKey: .database)
         try container.encode(tools, forKey: .tools)
         try container.encode(api, forKey: .api)
 
@@ -383,24 +323,6 @@ struct ProjectConfiguration: Codable, Identifiable {
         try container.encode(services, forKey: .services)
         try container.encodeIfPresent(changelogNextSectionLabel, forKey: .changelogNextSectionLabel)
         try container.encodeIfPresent(changelogNextSectionAliases, forKey: .changelogNextSectionAliases)
-    }
-}
-
-// MARK: - Database Configuration
-
-struct DatabaseConfig: Codable {
-    var host: String
-    var port: Int
-    var name: String
-    var user: String
-    var useSSHTunnel: Bool
-    
-    init(host: String = "localhost", port: Int = 3306, name: String = "", user: String = "", useSSHTunnel: Bool = true) {
-        self.host = host
-        self.port = port
-        self.name = name
-        self.user = user
-        self.useSSHTunnel = useSSHTunnel
     }
 }
 

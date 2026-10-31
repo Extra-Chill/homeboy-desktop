@@ -1,3 +1,5 @@
+> **This repository moved.** The desktop app's sources now live in [`desktop/`](https://github.com/Extra-Chill/homeboy/tree/main/desktop) of [Extra-Chill/homeboy](https://github.com/Extra-Chill/homeboy), with full history and tags (Extra-Chill/homeboy#16783). This repository is frozen, so please open issues and pull requests there.
+
 # Homeboy
 
 A visual dashboard for all your web projects. See everything in one place—what's deployed, what needs updating, and what's happening across your sites.
